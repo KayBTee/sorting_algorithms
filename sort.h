@@ -20,7 +20,7 @@ typedef struct listint_s
 
 void make_merge(int *array, int *temp, int begin, int middle, int end);
 void sort_merge(int array[], int first, int size, int asc);
-void merge_asc(int *array, int *temp, int begin, int end);
+void merge_asc(int *array, int *temp, int begin, int middle, int end);
 void merge_sort(int *array, size_t size);
 void quick_sort(int *array, size_t size);
 void change_swap(int *array, ssize_t item1, ssize_t item2);
