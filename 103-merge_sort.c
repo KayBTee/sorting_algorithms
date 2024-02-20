@@ -1,5 +1,4 @@
 #include "sort.h"
-
 /**
  *merge_sort - uses merge sort algorithm to
  *sort an array in ascending order
@@ -12,9 +11,8 @@ void merge_sort(int *array, size_t size)
 
 	if (array == NULL || size < 2)
 		return;
-
 	temp = my_calloc(size, sizeof(int));
-	merge_asc(array, temp, 0, size / 2, size - 1);
+	merge_asc(array, temp, 0, size - 1);
 	free(temp);
 }
 /**
@@ -25,8 +23,10 @@ void merge_sort(int *array, size_t size)
  */
 void *my_calloc(unsigned int members, unsigned int size)
 {
+
 	char *ptr;
 	unsigned int index;
+
 
 	if (members == 0 || size == 0)
 		return (NULL);
@@ -40,28 +40,8 @@ void *my_calloc(unsigned int members, unsigned int size)
 		ptr[index] = '\0';
 		index++;
 	}
-	return (ptr);
-}
-/**
- *merge_asc - sorts an array of integers in
- *ascending order using merge sort algorithm
- *@array: An array of integers to be sorted
- *@temp: used in merge
- *@begin:position of first element
- *@middle:position of middle element
- *@end: position of last element
- *
- */
-void merge_asc(int *array, int *temp, int begin, int middle, int end)
-{
-	if (begin < end)
-	{
-		int middle = (begin + end) / 2;
 
-		merge_asc(array, temp, begin, middle);
-		merge_asc(array, temp, middle + 1, end);
-		make_merge(array, temp, begin, middle, end);
-	}
+	return (ptr);
 }
 /**
  *make_merge - makes a merge
@@ -75,21 +55,60 @@ void merge_asc(int *array, int *temp, int begin, int middle, int end)
  */
 void make_merge(int *array, int *temp, int begin, int middle, int end)
 {
-	int left_idx = begin, right_idx = middle + 1, temp_idx = begin;
+	int left_idx = begin, right_idx = middle + 1, merge_idx = begin;
+	int left_size = middle - begin + 1;
+	int right_size = end - middle;
 
-	while (left_idx <= middle && right_idx <= end)
+	int left_array[left_size], right_array[right_size];
+
+	for (int i = 0; i < left_size; i++)
+		left_array[i] = array[begin + i];
+	for (int i = 0; i < right_size; i++)
+		right_array[i] = array[middle + 1 + i];
+
+	while (left_idx < left_size && right_idx < right_size)
 	{
-		if (array[left_idx] <= array[right_idx])
-			temp[temp_idx++] = array[left_idx++];
+		if (left_array[left_idx - begin] <= right_array[right_idx - middle - 1])
+			array[merge_idx++] = left_array[left_idx++ - begin];
 		else
-			temp[temp_idx++] = array[right_idx++];
+			array[merge_idx++] = right_array[right_idx++ - middle - 1];
 	}
-	while (left_idx <= middle)
-		temp[temp_idx++] = array[left_idx++];
 
-	while (right_idx <= end)
-		temp[temp_idx++] = array[right_idx++];
+	while (left_idx < left_size)
+		array[merge_idx++] = left_array[left_idx++ - begin];
 
-	for (int i = begin; i <= end; i++)
-		array[i] = temp[i];
+	while (right_idx < right_size)
+		array[merge_idx++] = right_array[right_idx++ - middle - 1];
+
+	printf("Merging...\n");
+	printf("[left]: ");
+	print_array(left_array, left_size);
+	printf("[right]: ");
+	print_array(right_array, right_size);
+	printf("[Done]: ");
+	print_array(&array[begin], left_size + right_size);
 }
+/**
+ *merge_asc - sorts an array of integers in
+ *ascending order using merge sort algorithm
+ *@array: An array of integers to be sorted
+ *@temp: used in merge
+ *@begin:position of first element
+ *@end: position of last element
+ *
+ */
+void merge_asc(int *array, int *temp, int begin, int end)
+{
+	int middle;
+
+	if (begin < end)
+	{
+		middle = (begin + end) / 2;
+
+		merge_asc(array, temp, begin, middle);
+		merge_asc(array, temp, middle + 1, end);
+
+		make_merge(array, temp, begin, middle, end);
+	}
+}
+
